@@ -4,13 +4,11 @@
 var wormSize = 22; // Width and height of pixels
 var worms = []; // The Array of "rain droplets"
 var chars = "@#$%&ABCDEFGHHIJKLMNOPQRSTUVWXYZ"; //Characters to be used
-var fade = 30; //How much each proceeding character in the chain is reduced by in alpha value
 
 // OBJETCS
 function Worm() { //I called it a worm because it made more sense in my head
-  this.y = 0;
+  this.y = -wormSize;
   this.x = floor(random(0, window.innerWidth / wormSize)) * wormSize;
-  this.length = 10;
   this.self = this;
   
   // 1 in 20 chance to spawn as a "glitch" in the matrix
@@ -26,7 +24,7 @@ function Worm() { //I called it a worm because it made more sense in my head
     this.y += wormSize; 
     
     // If the worm is totally off the bottom of the screen, remove it from the list
-    if (this.y - wormSize * this.length > height) {
+    if (this.y - wormSize > height) {
       var index = worms.indexOf(this);
       worms.splice(index, 1);
     }
@@ -34,17 +32,15 @@ function Worm() { //I called it a worm because it made more sense in my head
   
   // Draw
   this.draw = function() {
-    // Foreach piece in the worms body, draw it
-    for (var i = 0; i < this.length; i++) {
-      fill(this.colour.r - fade * i, this.colour.g  - fade * i, this.colour.b  - fade * i);
-      // Choose a random character and save its index
-      var index = random(0, chars.length - 1);
-      // Save the letter based upon the index
-      var letter = chars.substring(index, index + 1);
-      // Draw the letter
-      text(letter, this.x, this.y - wormSize * i, wormSize, wormSize);
-      //rect(this.x, this.y - wormSize * i, wormSize, wormSize);
-    }
+    fill(this.colour.r, this.colour.g, this.colour.b);
+    // Choose a random character and save its index
+    var index = random(0, chars.length - 1);
+    // Save the letter based upon the index
+    var letter = chars.substring(index, index + 1);
+    // Draw the letter
+    text(letter, this.x, this.y, wormSize, wormSize);
+    //rect(this.x, this.y - wormSize * i, wormSize, wormSize);
+    
   }
 }
 function Vector2(x, y) {
@@ -65,9 +61,9 @@ function setup() {
 }
 function draw() {
   //Clear the background to black
-  clear(255);
-  background(0);
-  noStroke();
+  //clear(0, 0, 0, 0.2);
+  background(0, 0, 0, 70);
+  
   
   // spawn between 0 to 2 new worms each frame
   for (var i = 0; i < random(3); i++) {
@@ -79,5 +75,4 @@ function draw() {
     worms[i].update();
     worms[i].draw();
   }
-  
 }

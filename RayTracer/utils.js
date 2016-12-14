@@ -5,8 +5,9 @@ var Vec3 = function(x, y, z) {
   this.y = y;
   this.z = z;
   this.self = this;
+  //Angle between two vectors in radians
   this.angle = function(otherVector) {
-    return Math.acos(this.dot(otherVector) / (this.dot(this) * otherVector.length));
+    return Math.acos(this.dot(otherVector)/(this.length*otherVector.length));
   };
   this.dot = function(otherVector) {
     return (this.x * otherVector.x + this.y * otherVector.y + this.z * otherVector.z);
@@ -19,16 +20,27 @@ var Vec3 = function(x, y, z) {
     this.z /= mag;
   };
   this.cross = function(otherVector) {
-    var vector = new Vec3((this.y * otherVector.z - this.z * otherVector.y),
+    return  new Vec3((this.y * otherVector.z - this.z * otherVector.y),
                     (this.z * otherVector.x - this.x * otherVector.z),
                     (this.x * otherVector.y - this.y * otherVector.x));
-    return vector;
   };
   //Using a Vec3 transformation Matrix
   this.rotate = function(matrix) {
     this.x = (this.x * matrix.data[0][0] + this.y * matrix.data[0][1] + this.z * matrix.data[0][2]);
     this.y = (this.x * matrix.data[1][0] + this.y * matrix.data[1][1] + this.z * matrix.data[1][2]);
     this.z = (this.x * matrix.data[2][0] + this.y * matrix.data[2][1] + this.z * matrix.data[2][2]);
+  }
+  //Zero the vector
+  this.zero = function() {
+    this.x = 0;
+    this.y = 0;
+    this.z = 0;
+  }
+  //Vector3 addition
+  this.add = function(otherVector) {
+    this.x += otherVector.x;
+    this.y += otherVector.y;
+    this.z += otherVector.z;
   }
 }
 
@@ -55,7 +67,7 @@ var Sphere = function(center, radius, colour) {
       //return -1 if it doesnt hit
       return -1;
     }
-  };
+  }
 }
 
 //A colour representing R, G, and B. No alpha support because its not needed at this time

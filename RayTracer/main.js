@@ -8,10 +8,14 @@ var objects = []; //All the objects in the scene
 var W = 120, H = 90; //Canvas dimensions
 var scale = 6; //Scale the canvas size just to make the screen bigger without actually using more pixels
 var invWidth = 1 / W; invHeight = 1 / H; //Break up a 1x1 unit geometric buffer into pixels
-var fov = 50; //Field of view;
+var fov = 60; //Field of view;
 var aspectRatio = W / H;
+var moveSpeed = 0.1;
+var keys = [false, false, false, false, false, false]; //w, a, s, d, L-arrow, R-arrow
 var angle = Math.tan(Math.PI * 0.5 * fov / 180.); //Calculates the viewing angle based on fov
-var rotationAngle = Math.PI / 100; //Turn amount in radians
+var rotationAngle = Math.PI / 50; //Turn amount in radians
+var rotationMatrix = new Mat3();
+var transformation = new Vec3(0, 0, 0);
 var requestAnimFrame =  window.requestAnimationFrame ||
                         window.webkitRequestAnimationFrame ||
                         window.mozRequestAnimationFrame ||
@@ -20,59 +24,45 @@ var requestAnimFrame =  window.requestAnimationFrame ||
 //FUNCTIONS
 function update(dt) {
   //Update scene here
-}
-
-function move(event) {
-  //MOVEMENT CODE
-  var rotationMatrix = new Mat3();
-  var array;
-  var transformation = new Vec3(0, 0, 0);
+  rotationMatrix.data = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]; //null the transform
+  transformation.zero(); //reset the vector to zeeeero
   var rotation = false;
   var movement = false;
 
-  //Figure out which matrix to use
-  if(event.keyCode == 87) {
-    //w keypress
-    transformation.z += .1;
+  if(keys[0]) { //Forward
+    transformation.add(new Vec3(0, 0, moveSpeed));
     movement = true;
   }
-  else if(event.keyCode == 83) {
-    //s keypress
-    transformation.z -= .1;
+  if(keys[1]) { //Strafe left
+    transformation.add(new Vec3(moveSpeed, 0, 0));
     movement = true;
   }
-  else if(event.keyCode == 65) {
-    //a keypress
-    transformation.x += .1;
+  if(keys[2]) { //Backwards
+    transformation.add(new Vec3(0, 0, -moveSpeed));
     movement = true;
   }
-  else if(event.keyCode == 68) {
-    //d keypress
-    transformation.x -= .1;
+  if(keys[3]) { //Strafe right
+    transformation.add(new Vec3(-moveSpeed, 0, 0));
     movement = true;
   }
-  else if(event.keyCode == 39) {
+  if(keys[5]) {
     //right arrow keypress
-    array = [[ Math.cos(rotationAngle), 0, Math.sin(rotationAngle)],
+    rotationMatrix.data = [[ Math.cos(rotationAngle), 0, Math.sin(rotationAngle)],
               [ 0, 1, 0],
-              [ -Math.sin(rotationAngle), 0, Math.cos(rotationAngle)]]
-    rotationMatrix.data = array;
+              [ -Math.sin(rotationAngle), 0, Math.cos(rotationAngle)]];
     rotation = true;
   }
-  else if(event.keyCode == 37) {
+  if(keys[4]) {
     //left arrow keypress
-    array = [[ Math.cos(-rotationAngle), 0, Math.sin(-rotationAngle)],
+    rotationMatrix.data = [[ Math.cos(-rotationAngle), 0, Math.sin(-rotationAngle)],
               [ 0, 1, 0],
-              [ -Math.sin(-rotationAngle), 0, Math.cos(-rotationAngle)]]
-    rotationMatrix.data = array;
+              [ -Math.sin(-rotationAngle), 0, Math.cos(-rotationAngle)]];
     rotation = true;
   }
 
   if (movement) {
     for (var o = 0; o < objects.length; o++) {
-      objects[o].center.x += transformation.x;
-      //element.center.y += transformation.y;
-      objects[o].center.z += transformation.z;
+      objects[o].center.add(transformation);
     }
   }
 
@@ -81,6 +71,61 @@ function move(event) {
     for (var o = 0; o < objects.length; o++) {
       objects[o].center.rotate(rotationMatrix);
     }
+  }
+}
+
+function proccessKeyPress(event) {
+  //Figure out which matrix to use
+  if(event.keyCode == 87) {
+    //w keypress
+    keys[0] = true;
+  }
+  else if(event.keyCode == 83) {
+    //s keypress
+    keys[2] = true;
+  }
+  else if(event.keyCode == 65) {
+    //a keypress
+    keys[1] = true;
+  }
+  else if(event.keyCode == 68) {
+    //d keypress
+    keys[3] = true;
+  }
+  else if(event.keyCode == 39) {
+    //right arrow keypress
+    keys[5] = true;
+  }
+  else if(event.keyCode == 37) {
+    //left arrow keypress
+    keys[4] = true;
+  }
+}
+
+function proccessKeyRelease(event) {
+  if(event.keyCode == 87) {
+    //w unprees
+    keys[0] = false;
+  }
+  else if(event.keyCode == 83) {
+    //s unprees
+    keys[2] = false;
+  }
+  else if(event.keyCode == 65) {
+    //a unprees
+    keys[1] = false;
+  }
+  else if(event.keyCode == 68) {
+    //d unprees
+    keys[3] = false;
+  }
+  else if(event.keyCode == 39) {
+    //right arrow unprees
+    keys[5] = false;
+  }
+  else if(event.keyCode == 37) {
+    //left arrow unprees
+    keys[4] = false;
   }
 }
 
@@ -136,7 +181,7 @@ function trace(objects, ray) {
   closest object and set it to the pixel colour */
   for (var o = 0; o < objects.length; o++) {
     var d = objects[o].hits(ray);
-    if (d == -1) continue;
+    if (d == -1 || objects[o].center.z > 0) continue;
     if (d < distance) {
       distance = d;
       index = o;
@@ -176,12 +221,16 @@ function init() {
   //Create some things in the scene
   //position, radius, colour
   objects.push(new Sphere(new Vec3(-1, 0, -6), 1, generateColour()));
-  objects.push(new Sphere(new Vec3(.5, 0, -7), 1, generateColour()));
+  objects.push(new Sphere(new Vec3(4, 0, -5), 1, generateColour()));
   objects.push(new Sphere(new Vec3(1, 1, -9), 1.5, generateColour()));
 
-  //In the event of keyboard input, call the move function
+  //In the event of keyboard input, update the keys array
   document.addEventListener('keydown', function(event) {
-    move(event);
+    proccessKeyPress(event);
+  });
+  //Do the same but for key up, not keyDown
+  document.addEventListener('keyup', function(event) {
+    proccessKeyRelease(event);
   });
 
   main();

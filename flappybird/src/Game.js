@@ -63,7 +63,7 @@ Game = function() {
     ctx.fillStyle = "#000000";
     if (state == states.STOPPED) {
       ctx.font = (UNIT * 0.8) + "px Georgia";
-      ctx.fillText("Tap/Click to Play!", UNIT * 1.2, UNIT * 3);
+      ctx.fillText("Space/Tap to Play!", UNIT * 1.2, UNIT * 3);
     } else if (state == states.RUNNING) {
       ctx.font = (UNIT) + "px Georgia";
       ctx.fillText("Score: " + score, UNIT * 0.3, UNIT);
@@ -71,7 +71,7 @@ Game = function() {
       ctx.font = (UNIT) + "px Georgia";
       ctx.fillText("Score: " + score, UNIT * 2.5, UNIT * 6);
       ctx.font = (UNIT / 1.5) + "px Georgia";
-      ctx.fillText("Click/Tap to try again!", UNIT, UNIT * 7);
+      ctx.fillText("Space/Tap to try again!", UNIT, UNIT * 7);
     }
   }
 

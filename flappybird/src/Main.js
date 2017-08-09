@@ -53,9 +53,7 @@ function init() {
   document.addEventListener('keydown', function() {
     proccessKeyPress();
   });
-  document.addEventListener('click', function() {
-    proccessKeyPress();
-  });
+  
   document.addEventListener('touchstart', function() {
     proccessKeyPress();
   });

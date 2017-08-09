@@ -25,7 +25,7 @@ Bird = function () {
     for(var i = 0; i <  pipes.length; i++) {
       if (Math.abs(this.pos.x - pipes[i].collider.x) < this.size / 2 + pipes[i].collider.width / 2) {
         if (Math.abs(this.pos.y - pipes[i].collider.y) > pipes[i].collider.height / 2 - this.size / 2) {
-          game.reset();
+          game.end();
         }
       }
     }
@@ -39,8 +39,8 @@ Bird = function () {
 Pipe = function() {
   //Use the negative space between the pipes as the "non-collidable area"
   this.width = UNIT * 2;
-  this.height = UNIT * 4.5;
-  this.speed = UNIT * 3;
+  this.height = UNIT * 3.5;
+  this.speed = UNIT * 4.5;
   this.pos = new Vector2(windowWidth + this.width, getRandomInt(UNIT * 5, windowHeight - UNIT * 5));
   this.passed = false;
   this.collider = new Rect(this.pos.x, this.pos.y, this.width, this.height);

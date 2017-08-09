@@ -16,8 +16,6 @@ var requestAnimFrame =  window.requestAnimationFrame ||
                         window.msRequestAnimationFrame;
 
 var game;
-var running = false;
-
 
 function main() {
   var now = Date.now();
@@ -26,17 +24,16 @@ function main() {
   deltaTime = (now - lastTime);
   secondCounter += deltaTime;
   fps++;
+
   if(secondCounter >= 1000) {
     //console.log("Fps: " + fps);
     secondCounter = 0;
     fps = 0;
-    if (running) {
-      pipeTimer++;
-    }
+
   }
 
   //Update then draw
-  if (running) {
+  if (state == states.RUNNING) {
     game.update(deltaTime / 1000);
   }
   game.draw();

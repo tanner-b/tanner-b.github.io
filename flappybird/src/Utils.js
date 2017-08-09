@@ -1,5 +1,7 @@
 // UTILITY "CLASS" //
 
+
+
 //2 dim vector util object
 Vector2 = function(x, y) {
   this.x = x; this.y = y;

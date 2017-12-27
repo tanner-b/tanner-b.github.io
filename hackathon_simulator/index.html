@@ -1,0 +1,48 @@
+<html>
+  <head>
+    <script type="text/javascript" src="properties.js"></script>
+    <script type="text/javascript" src="data.js"></script>
+    <script type="text/javascript" src="names.js"></script>
+    <script type="text/javascript" src="events.js"></script>
+    <script type="text/javascript" src="hacker.js"></script>
+    <script type="text/javascript" src="game.js"></script>
+    <script type="text/javascript" src="utils.js"></script>
+    <script type="text/javascript" src="main.js"></script>
+  </head>
+  <body align="center">
+    <div id = "gameWindow">
+      <canvas id="canvas">
+        If you are reading this it means that your browser does not have javascript support
+      </canvas>
+    </div>
+    <div id = "descriptionSpace">
+      <p id = "descriptionText">Ready to start hacking?</p>
+    </div>
+
+    <div id = "nextButton" hidden>
+      <button type="submit" onclick="update();"> Proceed to next hour </button>
+    </div>
+
+    <div id = "descriptionSpace">
+      <p id = "descriptionText"></p>
+    </div>
+
+    <div id = "hackerInitialization">
+        <table align="center">
+          <tr>
+            <td>Number of Hackers on your team: </td><td><input type="number" id="numberOfHackers" min="1" max="4" value="4"/></td>
+          </tr>
+          <tr>
+            <td>Name of your Hack: </td><td><input type="text" id="nameOfHack" placeholder="Project Name" /></td>
+          </tr>
+          <tr>
+            <td></td><td><button type="submit" onclick="initializeHackers(document.getElementById('numberOfHackers').value);"> Start! </button></td>
+          </tr>
+        </table>
+    </div>
+    <div id = "buttonSpace">
+
+    </div>
+  </body>
+
+</html>
